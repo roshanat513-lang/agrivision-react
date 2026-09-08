@@ -1,0 +1,185 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: #f2f6f2;
+  color: #1e2b1e;
+}
+
+.app-header {
+  background: #2f6b3a;
+  color: white;
+  padding: 16px 24px;
+}
+.app-header h1 {
+  margin: 0;
+  font-size: 20px;
+}
+.app-header p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 16px;
+  align-items: flex-start;
+}
+
+.map-wrapper {
+  flex: 3 1 700px;
+  height: calc(100vh - 160px);
+  min-height: 600px;
+  border-radius: 8px;
+  border: 1px solid #cfd9cf;
+  overflow: hidden; /* keeps the map's corners rounded */
+}
+
+.panel {
+  flex: 1 1 340px;
+  background: white;
+  border: 1px solid #cfd9cf;
+  border-radius: 8px;
+  padding: 16px;
+  height: fit-content;
+  max-height: calc(100vh - 160px);
+  overflow-y: auto;
+}
+
+.panel h2 {
+  font-size: 15px;
+  margin-top: 0;
+}
+
+.instructions {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #445544;
+  margin-bottom: 12px;
+}
+
+.point-list {
+  font-size: 13px;
+  margin-bottom: 12px;
+  padding-left: 18px;
+}
+
+.map-type-toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1000; /* sit above Leaflet's own panes/controls */
+  display: flex;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+.map-type-toggle button {
+  border: none;
+  background: white;
+  color: #2f6b3a;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+.map-type-toggle button.active {
+  background: #2f6b3a;
+  color: white;
+}
+
+.date-input {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 1px solid #cfd9cf;
+  border-radius: 6px;
+  color: #1e2b1e;
+  background: white;
+}
+
+.btn {
+  display: inline-block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.btn-primary {
+  background: #2f6b3a;
+  color: white;
+}
+.btn-primary:disabled {
+  background: #a8bfa8;
+  cursor: not-allowed;
+}
+.btn-secondary {
+  background: #e6ece6;
+  color: #2f6b3a;
+}
+
+.status {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #555;
+}
+
+.results {
+  margin-top: 16px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.ndvi-image {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  margin-top: 6px;
+}
+.ndvi-image-error {
+  font-size: 12px;
+  color: #a04040;
+  background: #fdf0f0;
+  border: 1px solid #f0d0d0;
+  border-radius: 6px;
+  padding: 8px;
+  margin-top: 6px;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+.stat-grid dt {
+  color: #667a66;
+}
+.stat-grid dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.results h3 {
+  font-size: 14px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 4px;
+}
+.results pre {
+  background: #f7f7f7;
+  padding: 8px;
+  border-radius: 6px;
+  white-space: pre-wrap;
+  font-size: 12px;
+}
