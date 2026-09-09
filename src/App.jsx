@@ -17,20 +17,22 @@ const ANALYZE_ENDPOINT = '/api/crop-health/analyze';
 const MAX_POINTS = 4;
 const DEFAULT_CENTER = [13.0827, 80.2707]; // Chennai — change to your area
 
-function buildRequestBody(points, date) {
+function buildRequestBody(points, startDate, endDate) {
   const body = {
     // Confirmed against the live Swagger "Try it out" example — each
     // corner is an object with latitude/longitude, not a [lat, lng] pair.
     polygon: points.map(([lat, lng]) => ({ latitude: lat, longitude: lng })),
   };
 
-  // Confirmed schema has ONE "date" field (format YYYY-MM-DD), not a
-  // start/end range — the backend itself searches a window of nearby
-  // scenes around whatever single date you send it. Only include the
-  // key at all if the user actually picked a date, so an empty field
+  // The backend now takes only an explicit start_date/end_date pair —
+  // there is no other date field anywhere in the API. Only include a
+  // key when the user actually picked that date, so an empty field
   // doesn't send an invalid empty string.
-  if (date) {
-    body.date = date;
+  if (startDate) {
+    body.start_date = startDate;
+  }
+  if (endDate) {
+    body.end_date = endDate;
   }
 
   return body;
@@ -119,7 +121,7 @@ export default function App() {
       const response = await fetch(API_BASE_URL + ANALYZE_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(buildRequestBody(points,endDate)),
+        body: JSON.stringify(buildRequestBody(points, startDate, endDate)),
       });
 
       const data = await response.json().catch(() => null);
@@ -135,16 +137,21 @@ export default function App() {
         return;
       }
             // Bonus: fetch the last 3 days of weather too, using the confirmed
-      // separate GET /api/weather endpoint (supports a "date" + "forecast_days"
-      // range, including past dates — unlike /api/crop-health/analyze, which
-      // only ever returns today + future days).
+      // separate GET /api/weather endpoint (supports an explicit
+      // start_date/end_date range, including past dates — unlike
+      // /api/crop-health/analyze, which only ever returns today + future
+      // days). There is no separate "forecast_days" field anymore — the
+      // range is just start_date..end_date.
       try {
         const { lat, lng } = fieldCenter(points);
         const threeDaysAgo = new Date();
         threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-        const startDate = threeDaysAgo.toISOString().slice(0, 10);
+        const pastStart = threeDaysAgo.toISOString().slice(0, 10);
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const pastEnd = yesterday.toISOString().slice(0, 10);
         const pastRes = await fetch(
-          `${API_BASE_URL}/api/weather?latitude=${lat}&longitude=${lng}&date=${startDate}&forecast_days=3`
+          `${API_BASE_URL}/api/weather?latitude=${lat}&longitude=${lng}&start_date=${pastStart}&end_date=${pastEnd}`
         );
         const pastData = await pastRes.json().catch(() => null);
         if (pastRes.ok && Array.isArray(pastData?.days)) {
@@ -245,10 +252,10 @@ export default function App() {
 
 /**
  * Shows the API response, matching the CONFIRMED real response shape:
- * field_name, polygon, area_acres, average_ndvi, min_ndvi, max_ndvi,
+ * polygon, area_acres, average_ndvi, min_ndvi, max_ndvi,
  * valid_pixel_fraction, health_status, vegetation_density, confidence,
  * ndvi_image, scene_date, cloud_coverage_pct, next_expected_pass,
- * llm_analysis, weather.
+ * llm_analysis, weather. (field_name has been removed from the API.)
  */
 function ResultsPanel({ data }) {
   // ndvi_image comes back as a path RELATIVE to the backend server, e.g.
